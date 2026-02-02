@@ -3,35 +3,42 @@ package controller;
 import model.Usuario;
 import service.UsuarioService;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet("/usuarios")
 public class UsuarioServlet extends HttpServlet {
 
-    private UsuarioService service = new UsuarioService();
+    private UsuarioService usuarioService = new UsuarioService();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        resp.getWriter().println("Servlet funcionando");
+        String nombre = request.getParameter("nombre");
+        String email = request.getParameter("email");
+
+        Usuario u = new Usuario();
+        u.setNombre(nombre);
+        u.setEmail(email);
+
+        usuarioService.crearUsuario(u);
+
+        response.sendRedirect("usuarios");
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        Usuario u = new Usuario();
-        u.setNombre(req.getParameter("nombre"));
-        u.setEmail(req.getParameter("email"));
-
-        service.crearUsuario(u);
-
-        resp.getWriter().println("Usuario recibido");
+        List<Usuario> lista = usuarioService.listarUsuarios();
+        request.setAttribute("usuarios", lista);
+        request.getRequestDispatcher("listaUsuarios.jsp")
+                .forward(request, response);
     }
 }
