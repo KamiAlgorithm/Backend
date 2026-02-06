@@ -1,19 +1,5 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
-<html>
-<head>
-    <title>Formulario Usuario</title>
-</head>
-<body>
-
-<h2>Crear Usuario</h2>
-
-<form action="usuarios" method="post">
-    <input type="text" name="nombre" placeholder="Nombre" required>
-    <br><br>
-    <input type="email" name="email" placeholder="Email" required>
-    <br><br>
-    <button type="submit">Guardar</button>
+<form method="post" action="${pageContext.request.contextPath}/usuario">
+    Nombre: <input type="text" name="nombre"><br>
+    Email: <input type="text" name="email"><br>
+    <input type="submit" value="Guardar">
 </form>
-
-</body>
-</html>

@@ -12,7 +12,9 @@
 
     <servlet-mapping>
         <servlet-name>UsuarioServlet</servlet-name>
-        <url-pattern>/usuarios</url-pattern>
+        <url-pattern>/test</url-pattern>
     </servlet-mapping>
-
+<welcome-file-list>
+    <welcome-file>formUsuario.jsp</welcome-file>
+</welcome-file-list>
 </web-app>
