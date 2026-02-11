@@ -20,9 +20,12 @@ public class UsuarioDAO {
             ps.setString(1, usuario.getNombre());
             ps.setString(2, usuario.getEmail());
             ps.executeUpdate();
+            
+            System.out.println("Usuario guardado: " + usuario.getNombre());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Error al guardar usuario: " + e.getMessage());
+            throw new RuntimeException("Error al guardar usuario en BD", e);
         }
     }
 
@@ -41,9 +44,12 @@ public class UsuarioDAO {
                 u.setEmail(rs.getString("email"));
                 lista.add(u);
             }
+            
+            System.out.println("Usuarios encontrados: " + lista.size());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Error al listar usuarios: " + e.getMessage());
+            throw new RuntimeException("Error al listar usuarios de BD", e);
         }
 
         return lista;

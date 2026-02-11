@@ -1,7 +1,6 @@
-package controller;
+package api;
 
 import com.google.gson.Gson;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,8 +16,8 @@ import java.util.List;
 @WebServlet("/api/usuarios")
 public class UsuarioApiServlet extends HttpServlet {
 
-    private UsuarioService service = new UsuarioService();
-    private Gson gson = new Gson();
+    private final UsuarioService service = new UsuarioService();
+    private final Gson gson = new Gson();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -38,15 +37,43 @@ public class UsuarioApiServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
+        // 1. Leer el body COMPLETO como texto
         BufferedReader reader = request.getReader();
-        Usuario u = gson.fromJson(reader, Usuario.class);
+        StringBuilder body = new StringBuilder();
+        String line;
 
-        if (u == null || u.getNombre() == null || u.getEmail() == null) {
+        while ((line = reader.readLine()) != null) {
+            body.append(line);
+        }
+
+        // 2. Validar body vacío
+        if (body.isEmpty()) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Body vacío");
+            return;
+        }
+
+        // 3. Convertir JSON → Usuario
+        Usuario u = gson.fromJson(body.toString(), Usuario.class);
+
+        // 4. Validaciones de negocio
+        if (u == null ||
+            u.getNombre() == null || u.getNombre().isBlank() ||
+            u.getEmail() == null || u.getEmail().isBlank()) {
+
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Datos inválidos");
             return;
         }
 
+        // 5. Persistir
         service.crearUsuario(u);
+
+        // 6. Respuesta correcta REST
         response.setStatus(HttpServletResponse.SC_CREATED);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        PrintWriter out = response.getWriter();
+        out.print(gson.toJson(u));
+        out.flush();
     }
 }
